@@ -4,4 +4,3 @@
 
 rootProject.name = 'json-fixtures'
 include(':json-fixtures-lib')
-include(':json-fixtures-intellij')
