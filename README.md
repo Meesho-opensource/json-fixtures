@@ -1,4 +1,4 @@
-JSON Test Fixture library for Java [![Build Status](https://travis-ci.org/corballis/json-fixtures.svg?branch=master)](https://travis-ci.org/corballis/json-fixtures)
+JSON Test Fixture library for Android
 
 `JSON Fixtures` is an open-source Java library that enables us, Java developers and testers, to test our applications quickly and easily, using fixtures that we have prepared in JSON format.
 

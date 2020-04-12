@@ -3,32 +3,15 @@
  */
 
 allprojects {
-    group = 'ie.corballis'
-    version = '2.1.5-SNAPSHOT'
+    group = 'meesho-opensource'
+    version = '2.2.0'
 }
 
 subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
-
     repositories {
         mavenLocal()
         maven {
             url = 'http://repo.maven.apache.org/maven2'
-        }
-
-        maven {
-            url = 'file:/Users/sachin.chandil/Documents/Sachin/workspace/android/json-fixtures/json-fixtures-intellij/repository'
-        }
-    }
-
-    sourceCompatibility = '1.8'
-
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                from(components.java)
-            }
         }
     }
 }
