@@ -2,7 +2,6 @@ package ie.corballis.fixtures.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -11,6 +10,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -128,11 +128,11 @@ public class BeanFactory {
         return create(DEFAULT_REFERENCE_PREFIX, type, fixtureNames);
     }
 
-    public <T> T create(JavaType type, String... fixtureNames) {
+    public <T> T create(Type type, String... fixtureNames) {
         return create(DEFAULT_REFERENCE_PREFIX, type, fixtureNames);
     }
 
-    public <T> T create(String referencePrefix, JavaType type, String... fixtureNames) {
+    public <T> T create(String referencePrefix, Type type, String... fixtureNames) {
         checkArgument(fixtureNames.length > 0, "At least one fixture needs to be specified.");
         JsonNode jsonNode = mergeFixtures(fixtureNames);
         return referenceResolver.resolve(jsonNode, type, getFixtureName(fixtureNames), referencePrefix);
@@ -196,5 +196,9 @@ public class BeanFactory {
 
         }
         return targetNode;
+    }
+
+    public DeserializeMapper getDeserializeMapper() {
+        return referenceResolver.getDeserializeMapper();
     }
 }

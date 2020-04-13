@@ -3,7 +3,7 @@
  */
 
 allprojects {
-    group = 'meesho-opensource'
+    group = 'meeshoopensource'
     version = '2.2.0'
 }
 

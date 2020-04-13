@@ -1,13 +1,13 @@
 package ie.corballis.fixtures.annotation;
 
-import ie.corballis.fixtures.core.BeanFactory;
-import ie.corballis.fixtures.settings.Settings;
-import ie.corballis.fixtures.util.FieldSetter;
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Map;
+
+import ie.corballis.fixtures.core.BeanFactory;
+import ie.corballis.fixtures.settings.Settings;
+import ie.corballis.fixtures.util.FieldSetter;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
@@ -20,7 +20,7 @@ import static java.lang.Thread.currentThread;
 public class FixtureAnnotations {
 
     private static final Map<Class<? extends Annotation>, FieldAnnotationProcessor<?>> annotationProcessorMap =
-        newHashMap();
+            newHashMap();
 
     static {
         annotationProcessorMap.put(Fixture.class, new FixtureFieldAnnotationProcessor());
@@ -30,7 +30,7 @@ public class FixtureAnnotations {
         initFixtures(targetInstance, null);
     }
 
-    public static void initFixtures(Object targetInstance, Settings.Builder settings) throws Exception {
+    public static BeanFactory initFixtures(Object targetInstance, Settings.Builder settings) throws Exception {
         checkNotNull(targetInstance, "Target instance must not be null");
         updateSettings(settings == null ? defaultSettings() : settings.build());
         initTestExecutorThread(currentThread());
@@ -38,6 +38,7 @@ public class FixtureAnnotations {
         settings().getSnapshotGenerator().validateSnapshots();
 
         processAnnotations(targetInstance, settings().getBeanFactory());
+        return settings().getBeanFactory();
     }
 
     private static void processAnnotations(Object targetInstance, BeanFactory beanFactory) throws Exception {
@@ -52,7 +53,7 @@ public class FixtureAnnotations {
                             new FieldSetter(targetInstance, field).set(bean);
                         } catch (Exception e) {
                             throw new Exception(
-                                "Problems setting field " + field.getName() + " annotated with " + annotation, e);
+                                    "Problems setting field " + field.getName() + " annotated with " + annotation, e);
                         }
                     }
                 }
@@ -63,9 +64,9 @@ public class FixtureAnnotations {
 
     @SuppressWarnings("unchecked")
     private static Object generateFixture(Annotation annotation, Field field, BeanFactory beanFactory) throws
-                                                                                                       IllegalAccessException,
-                                                                                                       InstantiationException,
-                                                                                                       IOException {
+            IllegalAccessException,
+            InstantiationException,
+            IOException {
 
         Object result = null;
 

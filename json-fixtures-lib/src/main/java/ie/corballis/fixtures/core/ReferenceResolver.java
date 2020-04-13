@@ -3,6 +3,7 @@ package ie.corballis.fixtures.core;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.lang.reflect.Type;
 import java.util.Stack;
 
 import ie.corballis.fixtures.io.DeserializeMapper;
@@ -27,6 +28,11 @@ public class ReferenceResolver {
     }
 
     public <T> T resolve(JsonNode original, JavaType type, String fixtureName, String referencePrefix) {
+        Object baseObjectMap = resolveAndCreateBaseObjectMap(original, fixtureName, referencePrefix);
+        return deserializeMapper.convertValue(baseObjectMap, type);
+    }
+
+    public <T> T resolve(JsonNode original, Type type, String fixtureName, String referencePrefix) {
         Object baseObjectMap = resolveAndCreateBaseObjectMap(original, fixtureName, referencePrefix);
         return deserializeMapper.convertValue(baseObjectMap, type);
     }
@@ -72,4 +78,7 @@ public class ReferenceResolver {
         return referenceNode;
     }
 
+    public DeserializeMapper getDeserializeMapper() {
+        return deserializeMapper;
+    }
 }
