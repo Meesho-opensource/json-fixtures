@@ -363,7 +363,7 @@ public void setUp() throws Exception {
 
 4. `SnapshotFixtureWriter`: If you want to change the way how the fixtures are written to the files, you can customize it by writing your custom `SnapshotFixtureWriter`. It can be useful when you are not using conventional [java project structures](#generate-snapshots-to-somewhere-else).
 
-5. `FixtureScanner`: By default `Json-fixtures` scans your classpath and looks for `.fixture.json` files. If you need more, you can read about the built-in scanners [below](https://github.com/corballis/json-fixtures#fixture-scanners). Default class: [ClassPathFixtureScanner](https://github.com/corballis/json-fixtures/blob/master/json-fixtures-lib/src/main/java/ie/corballis/fixtures/io/ClassPathFixtureScanner.java) 
+5. `FixtureScanner`: By default `Json-fixtures` scans your `src/test/resources/fixtures` directory and looks for `.fixture.json` files. If you need more, you can read about the built-in scanners [below](https://github.com/corballis/json-fixtures#fixture-scanners). Default class: [ResourceRootFixtureScanner](https://github.com/corballis/json-fixtures/blob/master/json-fixtures-lib/src/main/java/ie/corballis/fixtures/io/ResourceRootFixtureScanner.java) 
 You can see some examples here about how to configure the built-in scanners:
 ```java
 // search for fixture files which have the same name as the current test class
@@ -382,16 +382,17 @@ FixtureAnnotations.initFixtures(this, new Settings.Builder().useCompositeFixture
 
 ## Fixture Scanners
 
-Initially we started with only one `Scanner`. The `ClassPathFixtureScanner` could search for  every `.fixtures.json` file on your classpath. After we have been using the default `Scanner` for a while we have started to see the pitfalls of that concept. 
+The `ResourceRootFixtureScanner` could search for  every `.fixtures.json` file in your `src/test/resources/fixtures` directory. 
 
-Scanning the whole classpath means that we can use a fixture name only once.
+Scanning the whole `src/test/resources/fixtures` means that we can use a fixture name only once.
 It can be a useful feature when we would like to merge or reference fixtures from other files. However when your project grows, it's hard to remember which fixture names you have used earlier. Especially when multiple developers work on the same project.
 
 To find a solution which fits most of your needs we came up with the following scanners:
 
-- `ClassPathFixtureScanner`: The default `Scanner`. You can read about the capabilities in the beginning of this section.
-- `TestFileNameFixtureScanner`: Scans all fixtures on your classpath which start with the same name as your test class. e.g: You have your super test cases in `MySuperTests.java`. This `Scanner` will search for `MySuperTests*.fixtures.json` files. Practically you can split your fixtures to multiple files which belong to the same test class. 
-- `FolderFixtureScanner`: If you don't like to store your fixture files next to the test class or you want to specify a folder somewhere else you can use this scanner. Fixtures will only be found in this folder. You need to make sure that the fixture names are unique in the fixture files which are located in the specified folder.
+- `ResourceRootFixtureScanner`: The default `Scanner`. You can read about the capabilities in the beginning of this section.
+- `TestFileNameFixtureScanner`: Scans all fixtures on your `src/test/resources/fixtures` dir which start with the same name as your test class. e.g: You have your super test cases in `MySuperTests.java`. This `Scanner` will search for `MySuperTests*.fixtures.json` files. Practically you can split your fixtures to multiple files which belong to the same test class. 
+- `FolderFixtureScanner`: Scans whole given folder. You need to make sure that the fixture names are unique in the fixture files which are located in the specified folder.
+- `PrefixFixtureScanner`: Scans files in `src/test/resources/fixtures` directory in nested manner for given `prefix` of file name. If the prefix is `MyTestClass` then it would look for `MyTestClass*.fixture.json` file.
 - `CompositeFixtureScanner`: If you would like to enjoy the benefits of merging and references, but you don't want to use unique names everywhere, `CompositeFixtureScanner` helps you to combine multiple `Scanners`. You can specify as many scanners as you need. `CompositeFixtureScanner` additively combines the results of the fixture scanners. In the example below you can see how to store some base fixtures in a separated folder and in the meanwhile keep your test specific fixtures next to your test class: 
 ```java
 new CompositeFixtureScanner(new FolderFixtureScanner('/my/common/fixtures'), new TestFileNameFixtureScanner(MySuperTests.class));
@@ -569,7 +570,7 @@ A snapshot is the actual state of your bean, which will be written to a file for
 ### How snapshots work
 To try it out quickly, use the `FixtureAssert.assertThat(bean).toMatchSnapshot()` method, which will generate the initial json value at the first usage. 
 
-By default all snapshots are written to a `.fixtures.json` ending file next to your test class with the same name (`MyTests.java -> MyTests.fixtures.json`). If you need different file naming strategy or you want to generate the file elsewhere, jump to the [Generate snapshots to somewhere else](#generate-snapshots-to-somewhere-else) or [Change the name of the snapshot file](#change-the-name-of-the-snapshot-file) sections.
+By default all snapshots are written to a `.fixtures.json` ending file in the corresponding package directory structure in `src/test/resources/fixtures` directory. e.g. If `MyTestClass` is in `com.company.domain` package then snapshot file will be generated at path `src/test/resources/fixtures/com/company/domain/MyTestClass.fixture.json`. If you need different file naming strategy or you want to generate the file elsewhere, jump to the [Generate snapshots to somewhere else](#generate-snapshots-to-somewhere-else) or [Change the name of the snapshot file](#change-the-name-of-the-snapshot-file) sections.
 
 Conventionally the generated fixtures will have the same names as the running testcase. It's possible to call `toMatchSnapshot()` multiple times in a test. According to the default naming convention every call will be postfixed with the index of the execution.
 
